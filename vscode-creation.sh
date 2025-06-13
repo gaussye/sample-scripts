@@ -54,7 +54,7 @@ mkdir -p /home/ec2-user/.config/code-server
 cat > /home/ec2-user/.config/code-server/config.yaml << EOFINNER
 bind-addr: 0.0.0.0:8080
 auth: password
-password: changeme123
+password: changeme123!
 cert: false
 EOFINNER
 
@@ -91,7 +91,7 @@ cat > /home/ec2-user/WELCOME.txt << EOFWELCOME
 =================================================
 Code-server (VS Code) has been installed!
 Access it at: http://$PUBLIC_IP:8080
-Password: changeme123
+Password: changeme123!
 =================================================
 IMPORTANT: For security, please change the password in:
 ~/.config/code-server/config.yaml
@@ -147,6 +147,6 @@ echo “EC2 instance with code-server is being set up!”
 echo “It may take a few minutes for the installation to complete.”
 echo “”
 echo “Once ready, you can access code-server at: http://$PUBLIC_IP:8080"
-echo “Default password: changeme123”
+echo “Default password: changeme123!”
 echo “”
 echo “===================================================”
