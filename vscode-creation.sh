@@ -24,7 +24,7 @@ if ! aws ec2 describe-security-groups --group-names “$SECURITY_GROUP_NAME” -
 
     # Add inbound rules
     echo “Adding security group rules”
-    aws ec2 authorize-security-group-ingress --group-id “$SECURITY_GROUP_ID” --protocol tcp --port 8080 --cidr 14.145.15.145/32 --region “$REGION”
+    aws ec2 authorize-security-group-ingress --group-id “$SECURITY_GROUP_ID” --protocol tcp --port 8080 --cidr 0.0.0.0/0 --region “$REGION”
 else
     echo “Security group $SECURITY_GROUP_NAME already exists”
     SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --group-names “$SECURITY_GROUP_NAME” --region “$REGION” --query ‘SecurityGroups[0].GroupId’ --output text)
