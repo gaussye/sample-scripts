@@ -2,7 +2,7 @@
 
 # Set variables
 INSTANCE_NAME="CodeServerInstance"
-INSTANCE_TYPE="t2.small"
+INSTANCE_TYPE="t3.large"
 AMI_ID="ami-0373b8387fcb94813" # Amazon Linux 2023 AMI (adjust for your region)
 KEY_NAME="code-server-key"
 SECURITY_GROUP_NAME="code-server-sg"
