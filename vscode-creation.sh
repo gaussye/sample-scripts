@@ -1,37 +1,37 @@
 #!/bin/bash
 
 # Set variables
-INSTANCE_NAME=“CodeServerInstance”
-INSTANCE_TYPE=“t2.small”
-AMI_ID=“ami-0373b8387fcb94813” # Amazon Linux 2023 AMI (adjust for your region)
-KEY_NAME=“code-server-key”
-SECURITY_GROUP_NAME=“code-server-sg”
+INSTANCE_NAME="CodeServerInstance"
+INSTANCE_TYPE="t2.small"
+AMI_ID="ami-0373b8387fcb94813" # Amazon Linux 2023 AMI (adjust for your region)
+KEY_NAME="code-server-key"
+SECURITY_GROUP_NAME="code-server-sg"
 REGION=$(aws configure get region)
-if [ -z “$REGION” ]; then
-    REGION=“us-east-1” # Default region
+if [ -z "$REGION" ]; then
+    REGION="us-east-1" # Default region
 fi
 
-echo “=== Creating EC2 instance with code-server ===”
-echo “Region: $REGION”
-echo “Instance type: $INSTANCE_TYPE”
-echo “Instance name: $INSTANCE_NAME”
+echo "=== Creating EC2 instance with code-server ==="
+echo "Region: $REGION"
+echo "Instance type: $INSTANCE_TYPE"
+echo "Instance name: $INSTANCE_NAME"
 
 
-# Create security group if it doesn’t exist
-if ! aws ec2 describe-security-groups --group-names “$SECURITY_GROUP_NAME” --region “$REGION” &> /dev/null; then
-    echo “Creating security group: $SECURITY_GROUP_NAME”
-    SECURITY_GROUP_ID=$(aws ec2 create-security-group --group-name “$SECURITY_GROUP_NAME” --description “Security group for code-server” --region “$REGION” --query ‘GroupId’ --output text)
-
+# Create security group if it doesn't exist
+if ! aws ec2 describe-security-groups --group-names "$SECURITY_GROUP_NAME" --region "$REGION" &> /dev/null; then
+    echo "Creating security group: $SECURITY_GROUP_NAME"
+    SECURITY_GROUP_ID=$(aws ec2 create-security-group --group-name "$SECURITY_GROUP_NAME" --description "Security group for code-server" --region "$REGION" --query 'GroupId' --output text)
+    
     # Add inbound rules
-    echo “Adding security group rules”
-    aws ec2 authorize-security-group-ingress --group-id “$SECURITY_GROUP_ID” --protocol tcp --port 8080 --cidr 0.0.0.0/0 --region “$REGION”
+    echo "Adding security group rules"
+    aws ec2 authorize-security-group-ingress --group-id "$SECURITY_GROUP_ID" --protocol tcp --port 8080 --cidr 0.0.0.0/0 --region "$REGION"
 else
-    echo “Security group $SECURITY_GROUP_NAME already exists”
-    SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --group-names “$SECURITY_GROUP_NAME” --region “$REGION” --query ‘SecurityGroups[0].GroupId’ --output text)
+    echo "Security group $SECURITY_GROUP_NAME already exists"
+    SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --group-names "$SECURITY_GROUP_NAME" --region "$REGION" --query 'SecurityGroups[0].GroupId' --output text)
 fi
 
 # Create user data script with embedded code-server setup
-cat > user-data.sh << ‘EOF’
+cat > user-data.sh << 'EOF'
 #!/bin/bash
 
 # Set HOME environment variable explicitly
@@ -117,36 +117,36 @@ systemctl enable rc-local
 EOF
 
 # Launch EC2 instance
-echo “Launching EC2 instance...”
+echo "Launching EC2 instance..."
 INSTANCE_ID=$(aws ec2 run-instances \
-    --image-id “$AMI_ID” \
-    --instance-type “$INSTANCE_TYPE” \
-    --security-group-ids “$SECURITY_GROUP_ID” \
+    --image-id "$AMI_ID" \
+    --instance-type "$INSTANCE_TYPE" \
+    --security-group-ids "$SECURITY_GROUP_ID" \
     --user-data file://user-data.sh \
-    --tag-specifications “ResourceType=instance,Tags=[{Key=Name,Value=$INSTANCE_NAME}]” \
-    --region “$REGION” \
-    --query ‘Instances[0].InstanceId’ \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$INSTANCE_NAME}]" \
+    --region "$REGION" \
+    --query 'Instances[0].InstanceId' \
     --output text)
 
-echo “Instance $INSTANCE_ID is being launched”
-echo “Waiting for instance to be running...”
-aws ec2 wait instance-running --instance-ids “$INSTANCE_ID” --region “$REGION”
+echo "Instance $INSTANCE_ID is being launched"
+echo "Waiting for instance to be running..."
+aws ec2 wait instance-running --instance-ids "$INSTANCE_ID" --region "$REGION"
 
 # Get public IP address
 PUBLIC_IP=$(aws ec2 describe-instances \
-    --instance-ids “$INSTANCE_ID” \
-    --query ‘Reservations[0].Instances[0].PublicIpAddress’ \
+    --instance-ids "$INSTANCE_ID" \
+    --query 'Reservations[0].Instances[0].PublicIpAddress' \
     --output text \
-    --region “$REGION”)
+    --region "$REGION")
 
-echo “Instance is now running!”
-echo “Public IP: $PUBLIC_IP”
+echo "Instance is now running!"
+echo "Public IP: $PUBLIC_IP"
 
-echo “===================================================”
-echo “EC2 instance with code-server is being set up!”
-echo “It may take a few minutes for the installation to complete.”
-echo “”
-echo “Once ready, you can access code-server at: http://$PUBLIC_IP:8080"
-echo “Default password: changeme123!”
-echo “”
-echo “===================================================”
+echo "==================================================="
+echo "EC2 instance with code-server is being set up!"
+echo "It may take a few minutes for the installation to complete."
+echo ""
+echo "Once ready, you can access code-server at: http://$PUBLIC_IP:8080"
+echo "Default password: changeme123!"
+echo ""
+echo "==================================================="
