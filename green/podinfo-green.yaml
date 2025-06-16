@@ -43,7 +43,7 @@ spec:
         - name: PODINFO_UI_COLOR
           value: "#006400"
         - name: PODINFO_UI_MESSAGE
-          value: "Welcome to Podinfo green version!"
+          value: "Welcome to Podinfo green version!!!"
 ---
 apiVersion: v1
 kind: Service
