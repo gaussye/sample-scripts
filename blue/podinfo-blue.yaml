@@ -43,7 +43,7 @@ spec:
         - name: PODINFO_UI_COLOR
           value: "#34577c"
         - name: PODINFO_UI_MESSAGE
-          value: "Welcome to Podinfo blue version!!"
+          value: "Welcome to unified compute blue version!!"
 ---
 apiVersion: v1
 kind: Service
