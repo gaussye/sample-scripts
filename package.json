@@ -1,0 +1,16 @@
+{
+  "name": "sample-scripts-travel-app",
+  "version": "1.0.0",
+  "description": "Travel destination application with detail pages",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui"
+  },
+  "keywords": ["travel", "destinations"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
